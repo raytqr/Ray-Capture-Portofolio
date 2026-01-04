@@ -29,14 +29,29 @@ const Portfolio: React.FC = () => {
         .order('created_at', { ascending: false });
 
       if (data) {
-        setPortfolioItems(data.map(item => ({
+        // 1. Shuffle items randomly
+        const shuffled = data.sort(() => Math.random() - 0.5);
+
+        setPortfolioItems(shuffled.map(item => ({
           ...item,
           imageUrl: item.image_url
         })));
 
-        // Extract unique categories
-        const uniqueCats = Array.from(new Set(data.map(item => item.category))).sort();
-        setCategories(['All', ...uniqueCats]);
+        // 2. Extract and Sort Categories: All -> A-Z -> Other/Others
+        const rawCategories = Array.from(new Set(data.map(item => item.category)));
+
+        // Filter out "Other" and "Others" for special handling
+        const regularCats = rawCategories
+          .filter(c => c !== 'Other' && c !== 'Others')
+          .sort();
+
+        const finalCategories = ['All', ...regularCats];
+
+        // Append "Other" or "Others" at the end if they exist
+        if (rawCategories.includes('Others')) finalCategories.push('Others');
+        if (rawCategories.includes('Other')) finalCategories.push('Other');
+
+        setCategories(finalCategories);
       }
     };
     fetchItems();

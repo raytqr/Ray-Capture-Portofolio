@@ -32,8 +32,8 @@ const Navbar: React.FC = () => {
   ];
 
   const handleBookNow = () => {
-     const message = encodeURIComponent("Hello RayCapture, I would like to book a session!");
-     window.open(`https://wa.me/6285159993427?text=${message}`, '_blank');
+    const message = encodeURIComponent("Hello RayCapture, I would like to book a session!");
+    window.open(`https://wa.me/6285159993427?text=${message}`, '_blank');
   };
 
   return (
@@ -46,15 +46,14 @@ const Navbar: React.FC = () => {
           rounded-full w-[90%] md:w-auto
           transition-all duration-500
         `}>
-          
+
           {/* Logo Area */}
           <div className="flex items-center justify-between w-full md:w-auto md:mr-12">
-             <a href="#hero" onClick={(e) => scrollToSection(e, '#hero')} className="flex flex-col leading-none">
-              <span className="font-condensed font-bold text-xl tracking-widest text-white uppercase">RAY</span>
-              <span className="font-script text-lg text-neutral-400 -mt-1">Capture</span>
+            <a href="#hero" onClick={(e) => scrollToSection(e, '#hero')} className="block">
+              <img src="/logo.png" alt="RayCapture" className="h-8 w-auto object-contain invert" />
             </a>
-            
-            <button 
+
+            <button
               className="md:hidden text-white p-1"
               onClick={() => setMobileOpen(true)}
             >
@@ -66,8 +65,8 @@ const Navbar: React.FC = () => {
           <ul className="hidden md:flex items-center gap-8">
             {links.map((link) => (
               <li key={link.name}>
-                <a 
-                  href={link.href} 
+                <a
+                  href={link.href}
                   onClick={(e) => scrollToSection(e, link.href)}
                   className="text-sm font-medium text-neutral-400 hover:text-white transition-colors duration-300 uppercase tracking-wider cursor-pointer"
                 >
@@ -76,7 +75,7 @@ const Navbar: React.FC = () => {
               </li>
             ))}
             <li>
-              <button 
+              <button
                 onClick={handleBookNow}
                 className="bg-white text-black px-5 py-2 rounded-full text-sm font-bold hover:bg-neutral-200 transition-colors"
               >
@@ -99,9 +98,9 @@ const Navbar: React.FC = () => {
               onClick={() => setMobileOpen(false)}
               className="fixed inset-0 bg-black/60 backdrop-blur-sm z-[60] md:hidden"
             />
-            
+
             {/* Drawer */}
-            <motion.div 
+            <motion.div
               initial={{ x: '100%' }}
               animate={{ x: 0 }}
               exit={{ x: '100%' }}
@@ -109,7 +108,7 @@ const Navbar: React.FC = () => {
               className="fixed top-0 right-0 h-full w-[75%] max-w-[300px] bg-black/80 backdrop-blur-2xl border-l border-white/10 z-[70] p-6 flex flex-col md:hidden shadow-2xl"
             >
               <div className="flex justify-end mb-8">
-                <button 
+                <button
                   onClick={() => setMobileOpen(false)}
                   className="text-white p-2 hover:bg-white/10 rounded-full transition-colors"
                 >
@@ -120,8 +119,8 @@ const Navbar: React.FC = () => {
               <ul className="flex flex-col gap-6">
                 {links.map((link) => (
                   <li key={link.name}>
-                    <a 
-                      href={link.href} 
+                    <a
+                      href={link.href}
                       onClick={(e) => scrollToSection(e, link.href)}
                       className="text-2xl font-condensed font-bold text-neutral-300 hover:text-white hover:pl-2 transition-all block"
                     >
@@ -132,7 +131,7 @@ const Navbar: React.FC = () => {
               </ul>
 
               <div className="mt-auto">
-                <button 
+                <button
                   onClick={() => {
                     handleBookNow();
                     setMobileOpen(false);

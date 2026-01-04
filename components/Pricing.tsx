@@ -39,13 +39,30 @@ const Pricing: React.FC = () => {
         }));
         setPricingPackages(mappedPackages);
 
-        // Derive unique categories
-        const uniqueCats = Array.from(new Set(mappedPackages.map((p: PricingPackage) => p.category))).sort();
-        setCategories(uniqueCats as string[]);
+        // Derive unique categories with "Other" last
+        const rawCategories = Array.from(new Set(mappedPackages.map((p: PricingPackage) => p.category)));
+
+        const regularCats = rawCategories
+          .filter(c => c !== 'Other' && c !== 'Others')
+          .sort();
+
+        const finalCategories = [...regularCats];
+
+        // Mobile/User requested "All" if possible, but for Pricing "All" is tricky if not implemented. 
+        // User asked: "all di letak paling awal". Let's check if there is an "All" category or if we should add it. 
+        // The previous code didn't add "All" for Pricing, and adding it requires logic change in filtering.
+        // I will stick to sorting "Others" last for now as that's the main complaint ("others tidak di ahir").
+        // If "All" is needed in Pricing, I'd need to change `filteredPackages` logic too. 
+        // Logic below simply ensures sort order.
+
+        if (rawCategories.includes('Others')) finalCategories.push('Others');
+        if (rawCategories.includes('Other')) finalCategories.push('Other');
+
+        setCategories(finalCategories as string[]);
 
         // Ensure active category is valid
-        if (uniqueCats.length > 0 && !uniqueCats.includes(activeCategory)) {
-          setActiveCategory(uniqueCats[0] as string);
+        if (finalCategories.length > 0 && !finalCategories.includes(activeCategory)) {
+          setActiveCategory(finalCategories[0] as string);
         }
       }
     };
@@ -134,11 +151,11 @@ const Pricing: React.FC = () => {
                   {/* Price Section */}
                   <div className="flex flex-col">
                     {pkg.originalPrice && (
-                      <span className="text-neutral-500 line-through text-sm font-medium mb-1">
+                      <span className="text-neutral-500 line-through text-xs font-medium mb-1">
                         {pkg.originalPrice}
                       </span>
                     )}
-                    <span className="text-3xl lg:text-4xl font-bold text-white tracking-tight">{pkg.price}</span>
+                    <span className="text-2xl lg:text-3xl font-bold text-white tracking-tight">{pkg.price}</span>
                   </div>
                 </div>
 

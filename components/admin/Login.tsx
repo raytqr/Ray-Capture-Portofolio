@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { supabase } from '../../supabase';
 import { useNavigate } from 'react-router-dom';
 import toast from 'react-hot-toast';
-import { Lock, Mail } from 'lucide-react';
+import { Lock, Mail, ChevronRight, ShieldCheck } from 'lucide-react';
 
 const Login: React.FC = () => {
     const [email, setEmail] = useState('');
@@ -10,17 +10,12 @@ const Login: React.FC = () => {
     const navigate = useNavigate();
 
     useEffect(() => {
-        // Check if user is already logged in
         supabase.auth.getSession().then(({ data: { session } }) => {
-            if (session) {
-                navigate('/admin', { replace: true });
-            }
+            if (session) navigate('/admin', { replace: true });
         });
 
         const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
-            if (session) {
-                navigate('/admin', { replace: true });
-            }
+            if (session) navigate('/admin', { replace: true });
         });
 
         return () => subscription.unsubscribe();
@@ -29,10 +24,6 @@ const Login: React.FC = () => {
     const handleLogin = async (e: React.FormEvent) => {
         e.preventDefault();
         setLoading(true);
-
-        // For simplicity, we'll implement OTP login which is easier to setup without configuring passwords
-        // Or we could use password login if the user has set it up. 
-        // Let's assume Email OTP (Magic Link) as it's default Supabase on.
 
         const { error } = await supabase.auth.signInWithOtp({
             email,
@@ -44,33 +35,50 @@ const Login: React.FC = () => {
         if (error) {
             toast.error(error.message);
         } else {
-            toast.success('Check your email for the login link!');
+            toast.success('Access Link Sent to Secured Channel');
         }
         setLoading(false);
     };
 
-    // Alternative: Password Login (if user prefers)
-    // We can add a toggle or just use OTP as it's safer/easier by default.
-
     return (
-        <div className="min-h-screen bg-black flex items-center justify-center p-4">
-            <div className="bg-neutral-900 border border-neutral-800 p-8 rounded-2xl w-full max-w-md shadow-2xl">
-                <div className="text-center mb-8">
-                    <h1 className="text-3xl font-condensed font-bold text-white mb-2">Admin Access</h1>
-                    <p className="text-neutral-500">Enter your email to receive a magic link</p>
+        <div className="min-h-screen bg-[#050505] flex items-center justify-center p-4 relative overflow-hidden">
+            {/* Background Effects */}
+            <div className="absolute inset-0 pointer-events-none opacity-20"
+                style={{
+                    backgroundImage: 'radial-gradient(circle at 50% 50%, rgba(212, 175, 55, 0.1) 0%, transparent 50%)'
+                }}
+            />
+            <div className="absolute inset-0 z-0 opacity-10 pointer-events-none"
+                style={{
+                    backgroundImage: 'linear-gradient(rgba(255, 255, 255, 0.03) 1px, transparent 1px), linear-gradient(90deg, rgba(255, 255, 255, 0.03) 1px, transparent 1px)',
+                    backgroundSize: '20px 20px'
+                }}
+            />
+
+            <div className="bg-black/80 backdrop-blur-xl border border-white/10 p-12 w-full max-w-lg shadow-2xl relative z-10 group">
+                {/* Decorative Corner Accents */}
+                <div className="absolute top-0 left-0 w-8 h-8 border-t-2 border-l-2 border-brand-gold opacity-50"></div>
+                <div className="absolute bottom-0 right-0 w-8 h-8 border-b-2 border-r-2 border-brand-gold opacity-50"></div>
+
+                <div className="text-center mb-10">
+                    <div className="mb-6 flex justify-center">
+                        <img src="/logo.png" alt="RayCapture" className="h-16 w-auto object-contain invert" />
+                    </div>
+                    <h1 className="text-4xl font-condensed font-bold text-white tracking-widest uppercase mb-2">Admin Portal</h1>
+                    <p className="text-neutral-500 font-mono text-xs tracking-widest uppercase">Restricted Access // Authorized Personnel Only</p>
                 </div>
 
-                <form onSubmit={handleLogin} className="space-y-6">
-                    <div>
-                        <label className="block text-sm font-medium text-neutral-400 mb-2">Email Address</label>
-                        <div className="relative">
-                            <Mail className="absolute left-3 top-1/2 -translate-y-1/2 text-neutral-500" size={20} />
+                <form onSubmit={handleLogin} className="space-y-8">
+                    <div className="space-y-2">
+                        <label className="block text-xs font-mono font-medium text-brand-gold uppercase tracking-widest ml-1">Identity Verification</label>
+                        <div className="relative group/input">
+                            <Mail className="absolute left-4 top-1/2 -translate-y-1/2 text-neutral-500 group-focus-within/input:text-white transition-colors" size={20} />
                             <input
                                 type="email"
                                 value={email}
                                 onChange={(e) => setEmail(e.target.value)}
-                                className="w-full bg-black border border-neutral-700 rounded-lg py-3 pl-10 pr-4 text-white focus:outline-none focus:border-brand-gold transition-colors"
-                                placeholder="admin@example.com"
+                                className="w-full bg-neutral-900/50 border border-white/10 rounded-none py-4 pl-12 pr-4 text-white placeholder-neutral-700 font-mono focus:outline-none focus:border-brand-gold/50 focus:bg-neutral-900 transition-all duration-300"
+                                placeholder="ENTER_SECURE_EMAIL"
                                 required
                             />
                         </div>
@@ -79,16 +87,23 @@ const Login: React.FC = () => {
                     <button
                         type="submit"
                         disabled={loading}
-                        className="w-full bg-brand-gold text-black font-bold py-3 rounded-lg hover:bg-yellow-500 transition-colors flex items-center justify-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
+                        className="w-full bg-white text-black font-bold font-condensed tracking-widest uppercase py-4 hover:bg-brand-gold transition-colors flex items-center justify-center gap-3 disabled:opacity-50 disabled:cursor-not-allowed group/btn"
                     >
-                        {loading ? 'Sending...' : (
+                        {loading ? 'Authenticating...' : (
                             <>
                                 <Lock size={18} />
-                                Send Magic Link
+                                Initialize Secure Link
+                                <ChevronRight size={18} className="group-hover/btn:translate-x-1 transition-transform" />
                             </>
                         )}
                     </button>
                 </form>
+
+                <div className="mt-8 text-center border-t border-white/5 pt-6">
+                    <p className="text-[10px] text-neutral-600 font-mono uppercase tracking-wider">
+                        System v2.4.0 // Connection Secured via TLS
+                    </p>
+                </div>
             </div>
         </div>
     );
